@@ -45,7 +45,7 @@ Commit() {
                 ALL)
                 read -p "Please enter a message to commit: " COMMIT_MESSAGE
                 echo "GitHub All add and Commit"
-                git add * && git commit -m "$COMMIT_MESSAGE"
+                git add . && git commit -m "$COMMIT_MESSAGE"
                 git_Menulist
                 ;;
                 INDIVIDUAL)
