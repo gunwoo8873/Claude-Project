@@ -9,55 +9,75 @@ ReleaseNote() {
     2. This Script the Beta 1.0.0 is New Shell Scripting git Command
     3. The Shell Scripting and Language to Tutorial for Link
     Tutorial : https://github.com/gunwoo8873/Tutorial.git
+    Claude Project : https://github.com/gunwoo8873/Claude-Project.git
     ===================================================================
     "
-    git_Menulist
+    # return : Go to previous command
+    read -p "Go to previous command"
 }
 
 # Git Repository Setup
 Setup() {
-    USER_CONFIG="/config.json"
-    INITIALIZE_DIRECTORY="/.git"
-    INITIALIZE() {
+    #USER_CONFIG="Claude-Project/config.json"
+    INITIALIZE_DIRECTORY="Claude-Project/.git"
+    Initialize() {
         read -p "Initialize Git Repository? (y/n): " INITIALIZE_INPUT
         if [[ "$INITIALIZE_INPUT" == [Yy] ]]; then
             echo "Git Repository Initialize Setup..."
-            git init
-            git_Menulist
+            if [[ -d $INITIALIZE_DIRECTORY ]]; then
+                echo "Git Repository already exists"
+                git_Menulist
+            else
+                git init
+                read -p "Git User Name : " GIT_USERNAME
+                read -p "Git User Email : " GIT_EMAIL
+                git config --globar user.name "$GIT_USERNAME"
+                git config --globar user.email "$GIT_EMAIL"
+                git_Menulist
+            fi
         elif [[ "$INITIALIZE_INPUT" == [Nn] ]]; then
             git_Menulist
         fi
     }
-    CLONE() {
+    Clone() {
         read -p "Clone git Repository: " GIT_CLONE_REPOSITORY
         git clone "$GIT_CLONE_REPOSITORY"
         git_Menulist
     }
+
+    PS3=""
+    options=("Initialize" "Clone" "Back")
+    select SETUP_COMMAND in "${options[@]}"
+    do
+        case $SETUP_COMMAND in
+        "Initialize") Initialize ;;
+        "Clone") Clone ;;
+        "Back") git_Menulist ;;
+        esac
+    done
 }
 
 Commit() {
     Add_Commit() {
-        PS3="Please enter the scope of the file to commit: "
-        options=("ALL" "INDIVIDUAL")
+        PS3="Please enter the scope of the file to commit : "
+        options=("All" "Individual" "Back")
         select COMMIT_RANGE in "${options[@]}"
         do
             case $COMMIT_RANGE in
-                ALL)
+                All)
                 read -p "Please enter a message to commit: " COMMIT_MESSAGE
                 echo "GitHub All add and Commit"
                 git add * && git commit -m "$COMMIT_MESSAGE"
                 git_Menulist
                 ;;
-                INDIVIDUAL)
+                Individual)
                 git status
                 read -p "Please enter the file you want to add: " ADD_FILE
                 read -p "Please enter a message to commit: " COMMIT_MESSAGE
                 git add "$ADD_FILE" && git commit -m "$COMMIT_MESSAGE"
                 git_Menulist
                 ;;
-                *)
-                echo "Invalid option. Please try again."
-                ;;
+                *) echo "Invalid option. Please try again." ;;
             esac
         done
     }
@@ -68,18 +88,16 @@ Commit() {
     Merge() {
         echo "Git Merge Command (to be implemented)"
     }
-    Back(){
-        return
-    }
-    PS3="Please select a commit option: "
+
+    PS3="Please select a commit option : "
     options=("Add_Commit" "Push" "Merge" "Back")
     select COMMIT_COMMAND in "${options[@]}"
     do
         case $COMMIT_COMMAND in
-            Add_Commit) Add_Commit ;;
-            Push) Push ;;
-            Merge) Merge ;;
-            Back) return ;;
+            "Add_Commit") Add_Commit ;;
+            "Push") Push ;;
+            "Merge") Merge ;;
+            "Back") git_Menulist ;;
             *) echo "Invalid option. Please try again." ;;
         esac
     done
@@ -110,21 +128,18 @@ Branch() {
     Branch_Info(){
         echo "Current branch list"
         git branch -v
-        git_Menulist
     }
-    Back(){
-        return
-    }
-    PS3="Select a branch management option: "
+
+    PS3="Select a branch management option : "
     options=("Create" "Remove" "Switch" "Branch_Info" "Back")
     select BRANCH_COMMAND in "${options[@]}"
     do
         case $BRANCH_COMMAND in
-            Create) Create ;;
-            Remove) Remove ;;
-            Switch) Switch ;;
-            Branch_Info) Branch_Info ;;
-            Back) return ;;
+            "Create") Create ;;
+            "Remove") Remove ;;
+            "Switch") Switch ;;
+            "Branch_Info") Branch_Info ;;
+            "Back") git_Menulist ;;
             *) echo "Invalid option. Please try again." ;;
         esac
     done
@@ -140,7 +155,6 @@ Pull() {
 function git_Menulist() {
     PS3="Git Command to Select One: "
     options=("ReleaseNote" "Initialize" "Commit" "Pull" "Branch" "Help" "Exit")
-    
     select GIT_MENULIST in "${options[@]}"
     do
         case "$GIT_MENULIST" in
@@ -155,6 +169,4 @@ function git_Menulist() {
         esac
     done
 }
-
-# Start the menu
 git_Menulist
