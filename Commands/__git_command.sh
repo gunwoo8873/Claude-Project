@@ -12,14 +12,20 @@ ReleaseNote() {
     Claude Project : https://github.com/gunwoo8873/Claude-Project.git
     ===================================================================
     "
-    # return : Go to previous command
-    read -p "Go to previous command"
 }
 
 # Git Repository Setup
 Setup() {
     #USER_CONFIG="Claude-Project/config.json"
     INITIALIZE_DIRECTORY="Claude-Project/.git"
+    set_user_Name() {
+        read -p "Enter the User Name : " USER_USERNAME
+        git config --globar user.name "$USER_USERNAME"
+    }
+    set_user_Email() {
+        read -p "Enter the User Email : " USER_EMAIL
+        git config --globar user.email "$USER_EMAIL"
+    }
     Initialize() {
         read -p "Initialize Git Repository? (y/n): " INITIALIZE_INPUT
         if [[ "$INITIALIZE_INPUT" == [Yy] ]]; then
@@ -29,10 +35,7 @@ Setup() {
                 git_Menulist
             else
                 git init
-                read -p "Git User Name : " GIT_USERNAME
-                read -p "Git User Email : " GIT_EMAIL
-                git config --globar user.name "$GIT_USERNAME"
-                git config --globar user.email "$GIT_EMAIL"
+                set_user_Name && set_user_Email
                 git_Menulist
             fi
         elif [[ "$INITIALIZE_INPUT" == [Nn] ]]; then
@@ -154,12 +157,12 @@ Pull() {
 # Bash Run to get Menu list 
 function git_Menulist() {
     PS3="Git Command to Select One: "
-    options=("ReleaseNote" "Initialize" "Commit" "Pull" "Branch" "Help" "Exit")
+    options=("ReleaseNote" "Setup" "Commit" "Pull" "Branch" "Help" "Exit")
     select GIT_MENULIST in "${options[@]}"
     do
         case "$GIT_MENULIST" in
             "ReleaseNote") ReleaseNote ;;
-            "Initialize") Setup ;;
+            "Setup") Setup ;;
             "Commit") Commit ;;
             "Pull") Pull ;;
             "Branch") Branch ;;
