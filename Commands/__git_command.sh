@@ -64,13 +64,13 @@ Commit() {
     Add_Commit() {
         PS3="Please enter the scope of the file to commit : "
         options=("All" "Individual" "Back")
-        select COMMIT_RANGE in "${options[@]}"
+        select COMMIT_OPTIONS in "${options[@]}"
         do
-            case $COMMIT_RANGE in
+            case $COMMIT_OPTIONS in
                 All)
                 read -p "Please enter a message to commit: " COMMIT_MESSAGE
                 echo "GitHub All add and Commit"
-                git add * && git commit -m "$COMMIT_MESSAGE"
+                git add * && git commit -m "$COMMIT_MESSAGE" || git commit -a -m "$COMMIT_MESSAGE"
                 git_Menulist
                 ;;
                 Individual)
@@ -80,6 +80,7 @@ Commit() {
                 git add "$ADD_FILE" && git commit -m "$COMMIT_MESSAGE"
                 git_Menulist
                 ;;
+                Back) git_Menulist ;;
                 *) echo "Invalid option. Please try again." ;;
             esac
         done
@@ -87,6 +88,7 @@ Commit() {
     Push() {
         echo "Git Add and Commit to Repository Push"
         git push
+        git_Menulist
     }
     Merge() {
         echo "Git Merge Command (to be implemented)"
@@ -125,7 +127,7 @@ Branch() {
         echo "Current branch list"
         git branch -l
         read -p "Please write down the branch name you want to switch to: " SWITCH_BRANCH
-        git checkout "$SWITCH_BRANCH"
+        git checkout -b "$SWITCH_BRANCH"
         git_Menulist
     }
     Branch_Info(){
