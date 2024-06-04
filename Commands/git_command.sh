@@ -14,19 +14,20 @@ ReleaseNote() {
     "
 }
 
-# Git Repository Setup
+# Repository Setup
 Setup() {
     #USER_CONFIG="Claude-Project/config.json"
     INITIALIZE_DIRECTORY="Claude-Project/.git"
-    set_user_Name() {
-        read -p "Enter the User Name : " USER_USERNAME
-        git config --globar user.name "$USER_USERNAME"
-    }
-    set_user_Email() {
-        read -p "Enter the User Email : " USER_EMAIL
-        git config --globar user.email "$USER_EMAIL"
-    }
     Initialize() {
+        set_user_Name() {
+            read -p "Enter the User Name : " USER_USERNAME
+            git config --globar user.name "$USER_USERNAME"
+        }
+        set_user_Email() {
+            read -p "Enter the User Email : " USER_EMAIL
+            git config --globar user.email "$USER_EMAIL"
+        }
+
         read -p "Initialize Git Repository? (y/n): " INITIALIZE_INPUT
         if [[ "$INITIALIZE_INPUT" == [Yy] ]]; then
             echo "Git Repository Initialize Setup..."
@@ -42,13 +43,14 @@ Setup() {
             git_Menulist
         fi
     }
+    
     Clone() {
         read -p "Clone git Repository: " GIT_CLONE_REPOSITORY
         git clone "$GIT_CLONE_REPOSITORY"
         git_Menulist
     }
 
-    PS3=""
+    PS3="#"
     options=("Initialize" "Clone" "Back")
     select SETUP_COMMAND in "${options[@]}"
     do
@@ -60,6 +62,7 @@ Setup() {
     done
 }
 
+# File Manager Command
 Commit() {
     Add_Commit() {
         PS3="Please enter the scope of the file to commit : "
@@ -85,11 +88,19 @@ Commit() {
             esac
         done
     }
+
     Push() {
         echo "Git Add and Commit to Repository Push"
         git push
         git_Menulist
     }
+
+    Remove() {
+        echo "Current committed repository logs"
+        git log -2
+        echo "Git Remove Command (to be implemented)"
+    }
+
     Merge() {
         echo "Current committed repository logs"
         git log -2
@@ -110,6 +121,7 @@ Commit() {
     done
 }
 
+# Branch Command for User
 Branch() {
     Create(){
         echo "Current branch list"
@@ -118,6 +130,7 @@ Branch() {
         git branch "$CREATE_BRANCH"
         git_Menulist
     }
+
     Remove(){
         echo "Current branch list"
         git branch -l
@@ -125,6 +138,7 @@ Branch() {
         git branch -D "$REMOVE_BRANCH"
         git_Menulist
     }
+
     Switch(){
         echo "Current branch list"
         git branch -l
@@ -132,6 +146,7 @@ Branch() {
         git checkout -b "$SWITCH_BRANCH"
         git_Menulist
     }
+
     Branch_Info(){
         echo "Current branch list"
         git branch -v
@@ -152,6 +167,7 @@ Branch() {
     done
 }
 
+# Pull file updates
 Pull() {
     echo "GitHub repository pull"
     git pull
