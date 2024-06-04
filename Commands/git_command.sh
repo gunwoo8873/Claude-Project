@@ -5,7 +5,7 @@ ReleaseNote() {
     echo "
     ===================================================================
     Shell Scripting Command Automation for Git Command Skip Target
-    1. Terminal Bash Version in 2.25.*
+    1. Terminal Bash Version in 2.24.*
     2. This Script the Beta 1.0.0 is New Shell Scripting git Command
     3. The Shell Scripting and Language to Tutorial for Link
     Tutorial : https://github.com/gunwoo8873/Tutorial.git
@@ -91,6 +91,8 @@ Commit() {
         git_Menulist
     }
     Merge() {
+        echo "Current committed repository logs"
+        git log -2
         echo "Git Merge Command (to be implemented)"
     }
 
