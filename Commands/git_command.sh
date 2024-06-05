@@ -8,13 +8,14 @@ ReleaseNote() {
     1. Terminal Bash Version in 2.24.*
     2. This Script the Beta 1.0.0 is New Shell Scripting git Command
     3. The Shell Scripting and Language to Tutorial for Link
-    Tutorial : https://github.com/gunwoo8873/Tutorial.git
+    Tutorial : https://github.com/gunwoo8873/Language-Tutorial.git
     Claude Project : https://github.com/gunwoo8873/Claude-Project.git
     ===================================================================
     "
 }
 
 # Repository Setup
+# TODO(@gunwoo8873) : 
 Setup() {
     #USER_CONFIG="Claude-Project/config.json"
     INITIALIZE_DIRECTORY="Claude-Project/.git"
@@ -28,20 +29,23 @@ Setup() {
             git config --globar user.email "$USER_EMAIL"
         }
 
-        read -p "Initialize Git Repository? (y/n): " INITIALIZE_INPUT
-        if [[ "$INITIALIZE_INPUT" == [Yy] ]]; then
-            echo "Git Repository Initialize Setup..."
-            if [[ -d $INITIALIZE_DIRECTORY ]]; then
-                echo "Git Repository already exists"
-                git_Menulist
-            else
-                git init
-                set_user_Name && set_user_Email
+        Init() {
+            read -p "Initialize Git Repository? (y/n): " INITIALIZE_INPUT
+            if [[ "$INITIALIZE_INPUT" == [Yy] ]]; then
+                echo "Git Repository Initialize Setup..."
+                if [[ -d $INITIALIZE_DIRECTORY ]]; then
+                    echo "Git Repository already exists"
+                    git_Menulist
+                else
+                    git init
+                    set_user_Name && set_user_Email
+                    git_Menulist
+                fi
+            elif [[ "$INITIALIZE_INPUT" == [Nn] ]]; then
                 git_Menulist
             fi
-        elif [[ "$INITIALIZE_INPUT" == [Nn] ]]; then
-            git_Menulist
-        fi
+        }
+        Init
     }
     
     Clone() {
@@ -62,7 +66,7 @@ Setup() {
     done
 }
 
-# File Manager Command
+# TODO(@gunwoo8873): Command to Commit and Repository Pull (2024. 05. 20 ~ **)
 Commit() {
     Add_Commit() {
         PS3="Please enter the scope of the file to commit : "
@@ -104,7 +108,10 @@ Commit() {
     Merge() {
         echo "Current committed repository logs"
         git log -2
-        echo "Git Merge Command (to be implemented)"
+        read -p "Enter the branch that will receive commits from other launches. : " MERGE_MAIN_BRANCH
+        git checkout $MERGE_MAIN_BRANCH
+        read -p "???? : " MERGE_MAIN_BRANCH
+        git merge $MERGE_TARGET_BRANCH
     }
 
     PS3="Please select a commit option : "
@@ -121,7 +128,21 @@ Commit() {
     done
 }
 
+# Pull file updates
+# Pull을 Commit 메뉴에 추가하는 것이 과연 효율적일까?
+Pull() {
+    echo "GitHub repository pull"
+    git pull
+    git_Menulist
+}
+
+Branch_Info() {
+    echo "Add current Github branch list"
+    git branch -l
+}
+
 # Branch Command for User
+# TODO(@gunwoo8873) : Branch Command list Refactoring
 Branch() {
     Create(){
         echo "Current branch list"
@@ -167,26 +188,19 @@ Branch() {
     done
 }
 
-# Pull file updates
-Pull() {
-    echo "GitHub repository pull"
-    git pull
-    git_Menulist
-}
-
 # Bash Run to get Menu list 
 function git_Menulist() {
+    ReleaseNote
     PS3="Git Command to Select One: "
-    options=("ReleaseNote" "Setup" "Commit" "Pull" "Branch" "Help" "Exit")
+    options=("Setup" "Commit" "Pull" "Branch" "Help" "Exit")
     select GIT_MENULIST in "${options[@]}"
     do
         case "$GIT_MENULIST" in
-            "ReleaseNote") ReleaseNote ;;
             "Setup") Setup ;;
             "Commit") Commit ;;
             "Pull") Pull ;;
             "Branch") Branch ;;
-            "Help") ReleaseNote ;;  # Assuming 'Help' shows the Release Note
+            "Help") Help ;;  # Assuming 'Help' shows the Release Note
             "Exit") exit 1 ;;
             *) echo "Invalid option. Please try again." ;;
         esac

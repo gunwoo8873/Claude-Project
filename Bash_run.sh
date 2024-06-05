@@ -1,8 +1,5 @@
 #!/bin/bash
 
-GIT_SCRIPT_PATH="./Commands/git_command.sh"
-DOCKER_SCIRPT_PATH="./Commands/docker_command.sh"
-
 ReleaseNote() {
     echo "
     ===================================================================
@@ -16,7 +13,12 @@ ReleaseNote() {
     "
 }
 
+# Git and Docker Commands Script Directory
+GIT_SCRIPT_PATH="./Commands/git_command.sh"
+DOCKER_SCIRPT_PATH="./Commands/docker_command.sh"
+
 git_Command(){
+    set -x
     if [[ -f "$GIT_SCRIPT_PATH" ]]; then
         source "$GIT_SCRIPT_PATH"
     elif [[ ! -f "$GIT_SCRIPT_PATH" || ! -n "$GIT_SCRIPT_PATH" || ! -r "$GIT_SCRIPT_PATH" ]]; then
