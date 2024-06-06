@@ -1,60 +1,70 @@
 #!/bin/bash
 
-# Git Command Project Release Note
-ReleaseNote() {
-    echo "
-    ===================================================================
-    Shell Scripting Command Automation for Git Command Skip Target
-    1. Terminal Bash Version in 2.24.*
-    2. This Script the Beta 1.0.0 is New Shell Scripting git Command
-    3. The Shell Scripting and Language to Tutorial for Link
-    Tutorial : https://github.com/gunwoo8873/Language-Tutorial.git
-    Claude Project : https://github.com/gunwoo8873/Claude-Project.git
-    ===================================================================
-    "
-}
-
 # Repository Setup
-# TODO(@gunwoo8873) : 
 Setup() {
-    #USER_CONFIG="Claude-Project/config.json"
-    INITIALIZE_DIRECTORY="Claude-Project/.git"
+    USER_CONFIG="../config.json"
+    INITIALIZE_DIRECTORY="../.git"
+
     Initialize() {
-        set_user_Name() {
-            read -p "Enter the User Name : " USER_USERNAME
-            git config --globar user.name "$USER_USERNAME"
+        # TODO(@gunwoo8873) : Init에 대한 유저 데이터 저장방식 모색
+        Init_userName() {
+            read -p "Enter the username you want to save to Git : " USER_NAME
+            git config --globar user.name "$USER_NAME"
         }
-        set_user_Email() {
-            read -p "Enter the User Email : " USER_EMAIL
+
+        Init_userEmail() {
+            read -p "Enter the user email you want to save to Git : " USER_EMAIL
             git config --globar user.email "$USER_EMAIL"
         }
 
-        Init() {
-            read -p "Initialize Git Repository? (y/n): " INITIALIZE_INPUT
-            if [[ "$INITIALIZE_INPUT" == [Yy] ]]; then
-                echo "Git Repository Initialize Setup..."
-                if [[ -d $INITIALIZE_DIRECTORY ]]; then
-                    echo "Git Repository already exists"
+        Init_Setup() {
+            read -p "Do you want to initialize the Repository? (y/n): " INIT_SELECT_RESET
+            if [[ ${INIT_SELECT_RESET} == [Yy] ]]; then
+                if [[ -d ${INITIALIZE_DIRECTORY} ]]; then
+                    Init_userName && Init_userEmail
                     git_Menulist
                 else
                     git init
-                    set_user_Name && set_user_Email
+                    Init_userName && Init_userEmail
                     git_Menulist
                 fi
-            elif [[ "$INITIALIZE_INPUT" == [Nn] ]]; then
+            elif [[ ${INIT_SELECT_RESET} == [Nn] ]]; then
+                echo "This repository is already initialized."
                 git_Menulist
             fi
         }
-        Init
-    }
-    
-    Clone() {
-        read -p "Clone git Repository: " GIT_CLONE_REPOSITORY
-        git clone "$GIT_CLONE_REPOSITORY"
-        git_Menulist
+        Init_Setup
     }
 
-    PS3="#"
+    Clone() {
+        URL() {
+            read -p "Enter the GitHub repository address to clone : " CLONE_REPO_URL
+            echo "Clone the GitHub repository"
+            git clone ${CLONE_REPO_URL}
+        }
+        # TODO(@gunwoo8873) : Github의 SSH 토큰 발급 및 관리 방법 모색
+        SSH() {
+            echo "It's a function that's not currently being implemented"
+        }
+
+        CLI() {
+            echo "It's a function that's not currently being implemented"
+        }
+
+        PS3="Select the type of repository you want to copy : "
+        options=("URL" "SSH" "CLI" "Back")
+        select SETUP_COMMAND in "${options[@]}"
+        do
+            case $SETUP_COMMAND in
+                "URL") URL ;;
+                "SSH") SSH ;;
+                "CLI") CLI ;;
+                "Back") git_Menulist ;;
+            esac
+        done
+    }
+
+    PS3="# : "
     options=("Initialize" "Clone" "Back")
     select SETUP_COMMAND in "${options[@]}"
     do
@@ -190,9 +200,17 @@ Branch() {
 
 # Bash Run to get Menu list 
 function git_Menulist() {
-    ReleaseNote
+    Bash_run_dir() {
+        BASH_RUN_DIRECTORY="../Bash_run.sh"
+        if [[ -x ${BASH_RUN_DIRECTORY} ]]; then
+            source ${BASH_RUN_DIRECTORY}
+        else
+            echo "Bash_run.sh not found"
+        fi
+    }
+
     PS3="Git Command to Select One: "
-    options=("Setup" "Commit" "Pull" "Branch" "Help" "Exit")
+    options=("Setup" "Commit" "Pull" "Branch" "Help" "Back")
     select GIT_MENULIST in "${options[@]}"
     do
         case "$GIT_MENULIST" in
@@ -201,7 +219,7 @@ function git_Menulist() {
             "Pull") Pull ;;
             "Branch") Branch ;;
             "Help") Help ;;  # Assuming 'Help' shows the Release Note
-            "Exit") exit 1 ;;
+            "Back") Bash_run_dir ;;
             *) echo "Invalid option. Please try again." ;;
         esac
     done
