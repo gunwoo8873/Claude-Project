@@ -3,7 +3,6 @@
 # Main File Set list and configuration
 DOCKERFILE_PATH= "../Dockerfile"
 DOCKERIGNORE_PATH= "../Dockerignore"
-BASH_RUNFILE_PATH= "./../Bash_run.sh"
 
 # Local special string and regular string cross-validation
 Input= "$1"
@@ -34,6 +33,17 @@ Container() {
     opstions=("Create" "Remove" "Start" "Stop" "Pause" "Restart" "Exit" "List" "Back")
     select CONTAINER_MANAGERMENT in "${opstions[@]}"
     do
+        case ${CONTAINER_MANAGERMENT} in
+            Create) Create ;;
+            Remove) Remove ;;
+            Start) Start ;;
+            Stop) Stop ;;
+            Pause) Pause ;;
+            Restart) Restart ;;
+            Exit);;
+            List) List ;;
+            Back) Menulist ;;
+        esac
     done
 }
 
@@ -95,8 +105,17 @@ Image() {
 
 # Docker Volume Managerment
 Volume() {
-    Create() {}
-    Remove() {}
+    Create() {
+        echo "new create volume"
+        read -p "Enter the volume name : " CREATE_VOLUME_NAME
+        docker volume create ${CREATE_VOLUME_NAME}
+    }
+    Remove() {
+        echo "current volume list"
+        docker volume ls
+        read -p "Enter the volume name : " REMOVE_VOLUME_NAME
+        docker volume rm ${REMOVE_VOLUME_NAME}
+    }
     Mount() {}
     Unmount() {}
 
@@ -124,9 +143,11 @@ Build() {
 Settings() {
     echo "It's a function that's not currently being implemented"
     Login() {
+        echo "Docker user login"
         docker login
     }
     Logout() {
+        echo "Docker user logout"
         docker logout
     }
 
@@ -142,6 +163,7 @@ Settings() {
 }
 
 Back() {
+    BASH_RUNFILE_PATH= "./../Bash_run.sh"
     if [[ -x ${BASH_RUNFILE_PATH} ]]; then
         source ${BASH_RUNFILE_PATH}
     elif [[ ! -x ${BASH_RUNFILE_PATH} || ! -f ${BASH_RUNFILE_PATH} ]]
@@ -155,12 +177,14 @@ function Menulist() {
     docker_menu=("Container" "Image" "Volume" "Build" "Settings" "Back")
     select DOCKER_MENU_SELECT in 
     do
-        Container) Container ;;
-        Image) Image ;;
-        Volume) Volume ;;
-        Build) Build ;;
-        Settings) Settings ;;
-        Back) Back ;;
-        *) echo "Invalid Input" ;;
+        case ${DOCKER_MENU_SELECT} in
+            Container) Container ;;
+            Image) Image ;;
+            Volume) Volume ;;
+            Build) Build ;;
+            Settings) Settings ;;
+            Back) Back ;;
+            *) echo "Invalid Input" ;;
+        esac
     done
 }

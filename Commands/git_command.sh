@@ -11,36 +11,33 @@ Special_pattern="[!@#$%^&*()+?]"
 # Repository Setup
 Setup() {
     USER_CONFIG="../config.json"
-    INITIALIZE_DIRECTORY="../.git"
-
     Initialize() {
-        # TODO(@gunwoo8873) : Init에 대한 유저 데이터 저장방식 모색
-        Init_userName() {
-            read -p "Enter the username you want to save to Git : " USER_NAME
-            # ^[] : Indicates the beginning of a string. / 문자열의 시작을 의미한다
-            # []$ : means the end of the string / 문자열의 끝을 의미한다
-            if [[ $USER_NAME =~ ^[a-zA-Z0-9]$ ]]; then
-                git config --global user.name "$USER_NAME"
-            else
-                echo "Please enter a valid username."
-                Init_userName
-            fi
-            Setup
-        }
-
-        Init_userEmail() {
-            echo "Warings : For Git configuration user data, enter the a and z lowercase strings."
-            read -p "Enter the user email you want to save to Git : " USER_EMAIL
-            if [[ $USER_EMAIL =~ ^[a-zA-Z0-9._]+@[a-z]+\.[a-z]{2,2}$ ]]; then
-                git config --global user.email "$USER_EMAIL"
-            else
-                echo "Please enter a valid email address."
-                Init_userEmail
-            fi
-            Setup
-        }
-
         Init_Setup() {
+            # TODO(@gunwoo8873) : Init에 대한 유저 데이터 저장방식 모색
+            Init_userName() {
+                read -p "Enter the username you want to save to Git : " USER_NAME
+                # ^[] : Indicates the beginning of a string. / 문자열의 시작을 의미한다
+                # []$ : means the end of the string / 문자열의 끝을 의미한다
+                if [[ ${USER_NAME} =~ ^[a-zA-Z0-9]$ ]]; then
+                    git config --global user.name "${USER_NAME}"
+                else
+                    echo "Please enter a valid username."
+                    Init_userName
+                fi
+            }
+
+            Init_userEmail() {
+                echo "Warings : For Git configuration user data, enter the a and z lowercase strings."
+                read -p "Enter the user email you want to save to Git : " USER_EMAIL
+                if [[ $USER_EMAIL =~ ^[a-zA-Z0-9._]+@[a-z]+.[a-z]{2,2}$ ]]; then
+                    git config --global user.email "$USER_EMAIL"
+                else
+                    echo "Please enter a valid email address."
+                    Init_userEmail
+                fi
+            }
+
+            INITIALIZE_DIRECTORY="../.git"
             read -p "Do you want to initialize the Repository? (y/n): " INIT_SELECT_RESET
             if [[ ${INIT_SELECT_RESET} == [yY] ]]; then
                 if [[ -d ${INITIALIZE_DIRECTORY} ]]; then
@@ -92,15 +89,40 @@ Setup() {
     Pull() {
         echo "GitHub repository pull"
         git pull
-        # TODO(@gunwoo8873) : Home외에 메뉴리스트로 돌아가는 방법은 뭘까?
         Setup
     }
 
     Reset() {
+        # Warings : Note that the initializes additional and committed files and returns all of the work.
+        # 경고 : 추가 및 커밋된 파일을 초기화하고 모든 작업을 반환합니다.
+        Hard() {
+
+        }
+
+        #
+        Soft() {
+
+        }
+
+        #
+        Mixed() {
+
+        }
+
+        Back() {
+            Setup
+        }
+
         PS3=""
-        options=("HARD" "SOFT" "MIXED")
+        options=("HARD" "SOFT" "MIXED" "Back")
         select RESET_COMMAND in "${options[@]}"
         do
+            case $RESET_COMMAND in
+                HARD);;
+                SOFT);;
+                MIXED);;
+                Back);;
+            esac
         done
     }
 
@@ -128,17 +150,15 @@ Commit() {
                 All)
                 read -p "Please enter a message to commit: " COMMIT_MESSAGE
                 echo "GitHub All add and Commit"
-                git add * && git commit -m "${COMMIT_MESSAGE}"
-                Menulist
+                git add * && git commit -m "${COMMIT_MESSAGE}" && Push
                 ;;
                 Individual)
                 git status
                 read -p "Please enter the file you want to add: " ADD_FILE
                 read -p "Please enter a message to commit: " COMMIT_MESSAGE
-                git add "${ADD_FILE}" && git commit -m "${COMMIT_MESSAGE}"
-                Menulist
+                git add "${ADD_FILE}" && git commit -m "${COMMIT_MESSAGE}" && Push
                 ;;
-                Back) break 1 ;;
+                Back) Commit ;;
                 *) echo "Invalid option. Please try again." ;;
             esac
         done
@@ -147,14 +167,14 @@ Commit() {
     Push() {
         echo "Git Add and Commit to Repository Push"
         git push
-        git_Menulist
+        Commit
     }
 
     Remove() {
         echo "Current committed repository logs"
         git log -2
         echo "Git Remove Command (to be implemented)"
-        git_Menulist
+        Commit
     }
 
     Merge() {
@@ -164,7 +184,7 @@ Commit() {
         git checkout $MERGE_MAIN_BRANCH
         read -p "Enter Branch to merge : " MERGE_MAIN_BRANCH
         git merge $MERGE_TARGET_BRANCH
-        break
+        Commit
     }
 
     PS3="Please select a commit option : "
@@ -187,9 +207,9 @@ Branch() {
     Create() {
         Branch_list
         read -p "Please write down the branch name you want to add: " CREATE_BRANCH
-        if [[ $CREATE_BRANCH =~ ^[a-zA-Z0-9]$ ]]; then
+        if [[ $CREATE_BRANCH =~ ^[a-zA-Z]$ ]]; then
             git branch "$CREATE_BRANCH"
-        elif [[ $REMOVE_BRANCH =~ ^[0-9./%+-_]$ ]]; then
+        elif [[ $CREATE_BRANCH =~ ^[0-9./%+-_]$ ]]; then
             echo "Invalid branch name"
         fi
         Branch
@@ -208,19 +228,19 @@ Branch() {
     }
 
     Switch() {
-        Branch_list.list
+        Info.list
         read -p "Please write down the branch name you want to switch to: " SWITCH_BRANCH
         git checkout -b "$SWITCH_BRANCH"
-        if [[ $SWITCH_BRANCH =~ ^[a-zA-Z0-9]$ ]]; then
+        if [[ $SWITCH_BRANCH =~ ^[a-zA-Z]$ ]]; then
             git branch "$SWITCH_BRANCH"
-        elif [[ $REMOVE_BRANCH =~ ^[0-9./%+-_] ]]; then
+        elif [[ $SWITCH_BRANCH =~ ^[0-9./%+-_] ]]; then
             echo "Invalid branch name"
         fi
         Branch
     }
 
     # TODO(@gunwoo8873) : Branch Information에 대한 정보 제공방식을 어떤게 좋을까?
-    Branch_list() {
+    Info() {
         list() {
             echo "Git current branch list"
             git branch -l
@@ -234,14 +254,14 @@ Branch() {
     }
 
     PS3="Select a branch management option : "
-    options=("Create" "Remove" "Switch" "Branch_Info" "Back")
+    options=("Create" "Remove" "Switch" "Info" "Back")
     select BRANCH_SELECT_COMMAND in "${options[@]}"
     do
         case $BRANCH_SELECT_COMMAND in
             "Create") Create ;;
             "Remove") Remove ;;
             "Switch") Switch ;;
-            "Branch_Info") Branch_Info ;;
+            "Info") Info ;;
             "Back") Menulist ;;
             *) echo "Invalid option. Please try again." ;;
         esac
