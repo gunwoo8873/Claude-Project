@@ -1,5 +1,5 @@
-# LikeLion Project
-> **Warning: This `Two Sprint Project` session and `One Main Project` session are in `Beta Testing`. Please do not clone.**
+# LikeLion Claude Project ( `2024. 06. 10 ~`  ) 
+> **Warning: This `Two Sprint Project` session and `One Main Project` session are in `Beta Testing`. Please do not Clone or Fork.**
 * **Project Directory**
 ```markdown
 .
@@ -15,7 +15,7 @@
 
 * **Useed Language to Project**
     * Go + ???
-    * Docker + k8s
+    * Docker + k8s(Kubernetes)
     * Shell + Linux
     * Git + Github Action
     * HTML + CSS + JavaScript

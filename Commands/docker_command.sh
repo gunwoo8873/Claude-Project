@@ -1,22 +1,14 @@
 #!/bin/bash
 
-################################################################
-# Start developing Docker management commands (2024. 06. 08 ~ )
-################################################################
-# TODO
-# 1. 특수문자열 검증 방식
-# 2. 각 연계성을 지닌 명령어에 대한 대응 방식
-################################################################
-
 # Main File Set list and configuration
-DOCKERFILE_PATH="../Dockerfile"
-DOCKERIGNORE_PATH="../Dockerignore"
-BASH_RUNFILE_PATH="./../Bash_run.sh"
+DOCKERFILE_PATH= "../Dockerfile"
+DOCKERIGNORE_PATH= "../Dockerignore"
+BASH_RUNFILE_PATH= "./../Bash_run.sh"
 
 # Local special string and regular string cross-validation
-Input="$1"
-pattern="^[a-zA-Z0-9./]$"
-Special_pattern="[!@#$%^&*()+?]"
+Input= "$1"
+pattern= "^[a-zA-Z0-9./]$"
+Special_pattern= "[!@#$%^&*()+?]"
 
 # Docker Container Managerment
 Container() {

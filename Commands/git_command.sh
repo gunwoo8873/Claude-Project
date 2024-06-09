@@ -1,13 +1,5 @@
 #!/bin/bash
 
-################################################################
-# Start developing Git management commands (2024. 05. 20 ~ )
-################################################################
-# TODO
-# 1. 특수문자열 검증 방식
-# 2. 각 연계성을 지닌 명령어에 대한 대응 방식
-################################################################
-
 # Main File Set list and configuration
 BASH_RUNFILE_PATH="./../Bash_run.sh"
 
@@ -25,14 +17,15 @@ Setup() {
         # TODO(@gunwoo8873) : Init에 대한 유저 데이터 저장방식 모색
         Init_userName() {
             read -p "Enter the username you want to save to Git : " USER_NAME
-            # []$ : means the end of the string / 문자열의 끝을 의미한다
             # ^[] : Indicates the beginning of a string. / 문자열의 시작을 의미한다
+            # []$ : means the end of the string / 문자열의 끝을 의미한다
             if [[ $USER_NAME =~ ^[a-zA-Z0-9]$ ]]; then
                 git config --global user.name "$USER_NAME"
             else
                 echo "Please enter a valid username."
                 Init_userName
             fi
+            Setup
         }
 
         Init_userEmail() {
@@ -44,6 +37,7 @@ Setup() {
                 echo "Please enter a valid email address."
                 Init_userEmail
             fi
+            Setup
         }
 
         Init_Setup() {
@@ -51,16 +45,15 @@ Setup() {
             if [[ ${INIT_SELECT_RESET} == [yY] ]]; then
                 if [[ -d ${INITIALIZE_DIRECTORY} ]]; then
                     Init_userName && Init_userEmail
-                    Menulist
                 else
                     git init
                     Init_userName && Init_userEmail
-                    Menulist
                 fi
+                Setup
             elif [[ ${INIT_SELECT_RESET} == [nN] ]]; then
                 echo "This repository is already initialized."
-                Menulist
             fi
+            Setup
         }
     }
 
@@ -70,7 +63,9 @@ Setup() {
             echo "Clone the GitHub repository"
             git clone ${CLONE_REPO_URL}
             echo "Cloning of the repository is complete"
+            Setup
         }
+
         # TODO(@gunwoo8873) : Github의 SSH 토큰 발급 및 관리 방법 모색
         SSH() {
             echo "It's a function that's not currently being implemented"
@@ -98,7 +93,15 @@ Setup() {
         echo "GitHub repository pull"
         git pull
         # TODO(@gunwoo8873) : Home외에 메뉴리스트로 돌아가는 방법은 뭘까?
-        git_Menulist
+        Setup
+    }
+
+    Reset() {
+        PS3=""
+        options=("HARD" "SOFT" "MIXED")
+        select RESET_COMMAND in "${options[@]}"
+        do
+        done
     }
 
     PS3="Select the repository management type : "
@@ -109,7 +112,7 @@ Setup() {
         "Initialize") Initialize ;;
         "Clone") Clone ;;
         "Pull") Pull ;;
-        "Back") git_Menulist ;;
+        "Back") Menulist ;;
         esac
     done
 }
@@ -126,14 +129,14 @@ Commit() {
                 read -p "Please enter a message to commit: " COMMIT_MESSAGE
                 echo "GitHub All add and Commit"
                 git add * && git commit -m "${COMMIT_MESSAGE}"
-                git_Menulist
+                Menulist
                 ;;
                 Individual)
                 git status
                 read -p "Please enter the file you want to add: " ADD_FILE
                 read -p "Please enter a message to commit: " COMMIT_MESSAGE
                 git add "${ADD_FILE}" && git commit -m "${COMMIT_MESSAGE}"
-                git_Menulist
+                Menulist
                 ;;
                 Back) break 1 ;;
                 *) echo "Invalid option. Please try again." ;;
@@ -186,11 +189,10 @@ Branch() {
         read -p "Please write down the branch name you want to add: " CREATE_BRANCH
         if [[ $CREATE_BRANCH =~ ^[a-zA-Z0-9]$ ]]; then
             git branch "$CREATE_BRANCH"
-            break
         elif [[ $REMOVE_BRANCH =~ ^[0-9./%+-_]$ ]]; then
             echo "Invalid branch name"
-            break
         fi
+        Branch
     }
 
     Remove() {
@@ -199,11 +201,10 @@ Branch() {
         git branch -D "$REMOVE_BRANCH"
         if [[ $REMOVE_BRANCH =~ ^[a-zA-Z]$ ]]; then
             git branch "$REMOVE_BRANCH"
-            break
         elif [[ $REMOVE_BRANCH =~ ^[0-9./%+-_]$ ]]; then
             echo "Invalid branch name"
-            break
         fi
+        Branch
     }
 
     Switch() {
@@ -212,11 +213,10 @@ Branch() {
         git checkout -b "$SWITCH_BRANCH"
         if [[ $SWITCH_BRANCH =~ ^[a-zA-Z0-9]$ ]]; then
             git branch "$SWITCH_BRANCH"
-            break
         elif [[ $REMOVE_BRANCH =~ ^[0-9./%+-_] ]]; then
             echo "Invalid branch name"
-            break
         fi
+        Branch
     }
 
     # TODO(@gunwoo8873) : Branch Information에 대한 정보 제공방식을 어떤게 좋을까?
@@ -224,12 +224,12 @@ Branch() {
         list() {
             echo "Git current branch list"
             git branch -l
-            break
+            Branch
         }
         Details() {
             echo "Git current branch version list"
             git branch -v
-            break
+            Branch
         }
     }
 
@@ -252,6 +252,7 @@ History() {
     Graph() {
         echo "It's a function that's not currently being implemented"
     }
+
     Log() {
         echo "It's a function that's not currently being implemented"
     }
@@ -260,14 +261,14 @@ History() {
 # Bash Run to get Menu list
 function Menulist() {
     PS3="Git Command to Select One: "
-    options=("Setup" "Commit" "Branch" "Log" "Back")
+    options=("Setup" "Commit" "Branch" "History" "Back")
     select GIT_MENULIST in "${options[@]}"
     do
         case "$GIT_MENULIST" in
             "Setup") Setup ;;
             "Commit") Commit ;;
             "Branch") Branch ;;
-            "Log") Log ;;
+            "History") History ;;
             "Back") source BASH_RUNFILE_PATH ;;
             *) echo "Invalid option. Please try again." ;;
         esac
