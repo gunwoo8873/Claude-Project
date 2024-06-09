@@ -1,0 +1,14 @@
+name: Git and Docker commands test Build
+
+# Branch List : Main, Dev, Release, Hotfix, Major, Minor
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [major, minor, dev, release, hotfix]
+# User Branch switching due to push after user addition and commit
+jobs:
+    github-checkout:
+        name: github-checkout@v2
+        runs-on: ubuntu-latest
+        steps:

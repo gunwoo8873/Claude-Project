@@ -1,19 +1,34 @@
-# TODO(@gunwoo8873): Command to Initialize and Project Setup (2024. 06. 05 ~ **)
-function Project_Setup(){
-    
+class Setup{
+    [void] Initialize()
+    {
+        $INIT_SELET = Read-Host "Enter the repository Initialize? (y/n) : "
+        if ( $INIT_SELET -eq "y" -or $INIT_SELET -eq "Y" ) {
+            
+        }
+        elseif ( $INIT_SELET -eq "n" -or $INIT_SELET -eq "N" ) {
+        }
+        else {
+            Write-Output "Invalid Input"
+        }
+    }
+
+    [void] Clone()
+    {
+        URL() {
+        }
+        SSH() {
+        }
+        $CLONE_INPUT = Read-Host "Enter the repository Clone type? : "
+        
+    }
 }
 
+class Commit {}
+class Branch {}
+class History {}
 
-<#
-.SYNOPSIS
-    A short one-line action-based description, e.g. 'Tests if a function is valid'
-.DESCRIPTION
-    A longer description of the function, its purpose, common use cases, etc.
-.NOTES
-    Information or caveats about the function e.g. 'This function is not supported in Linux'
-.LINK
-    Specify a URI to a help page, this will show when Get-Help -Online is used.
-.EXAMPLE
-    Test-MyTestFunction -Verbose
-    Explanation of the function or its result. You can include multiple examples with additional .EXAMPLE lines
-#>
+function Menulist() {
+    $GIT_MENULIST = ("Setup", "Commit", "Branch", "History", "Back")
+    $MENU_SELECT = Read-Host "Select one the Menulist : "
+    Select-Object [[]]
+}
